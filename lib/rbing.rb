@@ -161,6 +161,8 @@ private
     
     source_options = filter_hash(options, [:http] + BASE_OPTIONS + QUERY_KEYWORDS)
     opts.merge!(scope_source_options(type, source_options))
+
+    opts.merge!('$format' => 'json')
     
     authentication_options = {:basic_auth => {
       :username => '', 
@@ -170,7 +172,6 @@ private
     http_options = options[:http] || {}
     http_options.merge!(authentication_options)
     http_options.merge(:query => opts)
-
   end
   
   

@@ -76,13 +76,14 @@ class RBing
   end
   
   include HTTParty
+  debug_output $stdout
   
   attr_accessor :instance_options
   
   base_uri "https://api.datamarket.azure.com/Data.ashx/Bing/SearchWeb/Web"
   format :json
   
-  BASE_OPTIONS = [:version, :market, :adult, :query, :appid, :sources]
+  BASE_OPTIONS = [:version, :market, :adult, :query, :appid]
   
   # Query Keywords: <http://help.live.com/help.aspx?project=wl_searchv1&market=en-US&querytype=keyword&query=redliub&tmt=&domain=www.bing.com:80>
   #
@@ -90,7 +91,7 @@ class RBing
   
   # Source Types: <http://msdn.microsoft.com/en-us/library/dd250847.aspx>
   #
-  SOURCES = %w(Ad Image InstantAnswer News Phonebook RelatedSearch Spell Web)
+  SOURCES = %w(Web)
   
   # Set up methods for each search source:
   # +ad+, +image+, +instant_answer+, +news+, +phonebook+, +related_search+,
@@ -156,7 +157,7 @@ private
   #
   def options_for(type, query, options={})
     opts = instance_options.merge(filter_hash(options, BASE_OPTIONS))
-    opts.merge!(:sources => type.to_s, :query => build_query(query, options))
+    opts.merge!(:query => build_query(query, options))
     
     source_options = filter_hash(options, [:http] + BASE_OPTIONS + QUERY_KEYWORDS)
     opts.merge!(scope_source_options(type, source_options))

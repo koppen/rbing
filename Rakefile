@@ -1,8 +1,11 @@
 require 'rubygems' unless ENV['NO_RUBYGEMS']
-require 'rake/gempackagetask'
-require 'rubygems/specification'
-require 'date'
-require 'spec/rake/spectask'
+require 'bundler'
+Bundler::GemHelper.install_tasks
+
+require 'rspec/core/rake_task'
+RSpec::Core::RakeTask.new(:spec)
+
+task :default => :spec
 
 GEM = "rbing"
 GEM_VERSION = "1.1.0"
@@ -35,25 +38,3 @@ end
 
 task :default => :spec
 
-desc "Run specs"
-Spec::Rake::SpecTask.new do |t|
-  t.spec_files = FileList['spec/**/*_spec.rb']
-  t.spec_opts = %w(-fs --color)
-end
-
-
-Rake::GemPackageTask.new(spec) do |pkg|
-  pkg.gem_spec = spec
-end
-
-desc "install the gem locally"
-task :install => [:package] do
-  sh %{sudo gem install pkg/#{GEM}-#{GEM_VERSION}}
-end
-
-desc "create a gemspec file"
-task :make_spec do
-  File.open("#{GEM}.gemspec", "w") do |file|
-    file.puts spec.to_ruby
-  end
-end

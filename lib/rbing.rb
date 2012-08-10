@@ -122,7 +122,7 @@ private
   # +options+ can contain values to be passed with each query.
   #
   def initialize(app_id=nil, options={})
-    @instance_options = options.merge(:AppId => (app_id || user_app_id))
+    @instance_options = options # options.merge(:AppId => (app_id || user_app_id))
   end
   # constructs a query string for the given
   # +query+ and the optional query +options+
@@ -161,8 +161,15 @@ private
     source_options = filter_hash(options, [:http] + BASE_OPTIONS + QUERY_KEYWORDS)
     opts.merge!(scope_source_options(type, source_options))
     
+    authentication_options = {:basic_auth => {
+      :username => '', 
+      :password => "/yjW8ZAu5eW2+JTS0RbYvZk4V2lOivQVBK360EP3kk0="
+    }}
+
     http_options = options[:http] || {}
+    http_options.merge!(authentication_options)
     http_options.merge(:query => opts)
+
   end
   
   

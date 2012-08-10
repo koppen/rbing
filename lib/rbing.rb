@@ -79,7 +79,7 @@ class RBing
   
   attr_accessor :instance_options
   
-  base_uri "http://api.search.live.net/json.aspx"
+  base_uri "https://api.datamarket.azure.com/Data.ashx/Bing/SearchWeb/Web"
   format :json
   
   BASE_OPTIONS = [:version, :market, :adult, :query, :appid, :sources]

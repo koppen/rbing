@@ -139,7 +139,7 @@ private
         queries << " #{kw}:#{options[kw]}"
       end
     end
-    "#{query} #{queries.join(' ')}".strip
+    "'#{query} #{queries.join(' ')}'".strip
   end
   
   
@@ -157,7 +157,7 @@ private
   #
   def options_for(type, query, options={})
     opts = instance_options.merge(filter_hash(options, BASE_OPTIONS))
-    opts.merge!(:query => build_query(query, options))
+    opts.merge!(:Query => build_query(query, options))
     
     source_options = filter_hash(options, [:http] + BASE_OPTIONS + QUERY_KEYWORDS)
     opts.merge!(scope_source_options(type, source_options))

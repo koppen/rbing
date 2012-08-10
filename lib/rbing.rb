@@ -112,7 +112,7 @@ class RBing
   #
   def search(source, query, options={})
     rsp = self.class.get('', options_for(source, query, options))
-    ResponseData.new(rsp['SearchResponse']) if rsp
+    ResponseData.new(rsp['d']) if rsp
   end
   
   

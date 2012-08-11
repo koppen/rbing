@@ -49,6 +49,10 @@ class RBing
   #  => [3, 4]
   #
   class ResponseData < Hash
+    # Returns the web search results from Bing
+    def web
+      self
+    end
   private
     def initialize(data={})
       data.each_pair {|k,v| self[k.to_s] = deep_parse(v) }
@@ -76,7 +80,7 @@ class RBing
   end
   
   include HTTParty
-  debug_output $stdout
+  # debug_output $stdout
   
   attr_accessor :instance_options
   

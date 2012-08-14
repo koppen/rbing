@@ -2,7 +2,7 @@ require "httparty"
 require "yaml"
 #
 # Usage:
-# 
+#
 #  bing = RBing.new("YOURAPPID")
 #  
 #  rsp = bing.web("ruby")
@@ -30,7 +30,7 @@ require "yaml"
 #  => "1 furlong = 40 rods"
 #
 class RBing
-  
+
   # Convenience wrapper for the response Hash.
   # Converts keys to Strings. Crawls through all
   # member data and converts any other Hashes it
@@ -39,7 +39,7 @@ class RBing
   # to camel case.
   #
   # Usage:
-  # 
+  #
   #  rd = ResponseData.new("AlphaBeta" => 1, "Results" => {"Gamma" => 2, "delta" => [3, 4]})
   #  puts rd.alpha_beta
   #  => 1
@@ -74,31 +74,30 @@ class RBing
       end
     end
   end
-  
+
   include HTTParty
-  # debug_output $stdout
-  
+
   attr_accessor :instance_options
-  
+
   base_uri "https://api.datamarket.azure.com/Data.ashx/Bing/SearchWeb/Web"
   format :json
-  
+
   BASE_OPTIONS = [:version, :market, :adult, :query, :appid]
-  
+
   # Query Keywords: <http://help.live.com/help.aspx?project=wl_searchv1&market=en-US&querytype=keyword&query=redliub&tmt=&domain=www.bing.com:80>
   #
   QUERY_KEYWORDS = [:site, :language, :contains, :filetype, :inanchor, :inbody, :intitle, :ip, :loc, :location, :prefer, :feed, :hasfeed, :url]
-  
+
   # Source Types: <http://msdn.microsoft.com/en-us/library/dd250847.aspx>
   #
   SOURCES = %w(Web)
-  
+
   # Set up methods for each search source:
   # +ad+, +image+, +instant_answer+, +news+, +phonebook+, +related_search+,
   # +spell+ and +web+
   #
   # Example:
-  # 
+  #
   #   bing = RBing.new(YOUR_APP_ID)
   #   bing.web("ruby gems", :count => 10)
   #
@@ -106,19 +105,16 @@ class RBing
     fn = source.to_s.gsub(/[a-z][A-Z]/) {|c| "#{c[0,1]}_#{c[1,1]}" }.downcase
     class_eval "def #{fn}(query, options={}) ; search('#{source}', query, options) ; end"
   end
-  
-  
+
   # issues a search for +query+ in +source+
   #
   def search(source, query, options={})
     rsp = self.class.get('', options_for(source, query, options))
     ResponseData.new(rsp['d']) if rsp
   end
-  
-  
+
 private
-  
-  
+
   # instantiates a new RBing client with the given +app_id+.
   # +options+ can contain values to be passed with each query.
   #
@@ -141,8 +137,7 @@ private
     end
     "'#{query} #{queries.join(' ')}'".strip
   end
-  
-  
+
   # returns +options+ with its keys converted to
   # strings and any keys in +exclude+ omitted.
   #
@@ -150,22 +145,21 @@ private
     ex = exclude.inject({}) {|h,k| h[k.to_s] = true; h }
     options.inject({}) {|h,kv| h[kv[0]] = kv[1] unless ex[kv[0].to_s]; h }
   end
-  
-  
+
   # returns an options Hash suitable for passing to
   # HTTParty's +get+ method
   #
   def options_for(type, query, options={})
     opts = instance_options.merge(filter_hash(options, BASE_OPTIONS))
     opts.merge!(:Query => build_query(query, options))
-    
+
     source_options = filter_hash(options, [:http] + BASE_OPTIONS + QUERY_KEYWORDS)
     opts.merge!(scope_source_options(type, source_options))
 
     opts.merge!('$format' => 'json')
-    
+
     authentication_options = {:basic_auth => {
-      :username => '', 
+      :username => '',
       :password => "/yjW8ZAu5eW2+JTS0RbYvZk4V2lOivQVBK360EP3kk0="
     }}
 
@@ -173,16 +167,14 @@ private
     http_options.merge!(authentication_options)
     http_options.merge(:query => opts)
   end
-  
-  
+
   # returns a Hash containing the data in +options+
   # with the keys prefixed with +type+ and '.'
   #
   def scope_source_options(type, options={})
     options.inject({}) {|h,kv| h["#{type}.#{kv[0]}"] = kv[1]; h }
   end
-  
-  
+
   # returns the user's default app id, if one has been
   # defined in ~/.rbing_app_id
   #
@@ -190,8 +182,7 @@ private
     @user_app_id = nil if force
     @user_app_id ||= read_user_app_id
   end
-  
-  
+
   # reads the App Id stored in ~/.rbing_app_id
   #
   def read_user_app_id

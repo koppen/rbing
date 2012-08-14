@@ -15,6 +15,6 @@ describe "RBing" do
   end
   
   it "should return search results" do
-    @bing.web("ruby").web.results.should_not be_empty
+    @bing.web("ruby").results.should_not be_empty
   end
 end

@@ -6,27 +6,27 @@ require "yaml"
 #  bing = RBing.new("YOURAPPID")
 #  
 #  rsp = bing.web("ruby")
-#  puts rsp.web.results[0].title
+#  puts rsp.results[0].title
 #  => "Ruby (programming language) - Wikipedia, the free encyclopedia"
 #  
 #  rsp = bing.web("ruby", :site => "github.com")
-#  puts rsp.web.results[0].url
+#  puts rsp.results[0].url
 #  => "http://github.com/vim-ruby/vim-ruby/tree/master"
 #  
 #  rsp = bing.web("ruby", :site => ["github.com", "rubyforge.org"])
-#  puts rsp.web.results[0].url
+#  puts rsp.results[0].url
 #  => "http://rubyforge.org/"
 #  
 #  rsp = bing.news("search engines")
-#  puts rsp.web.results[0].title
+#  puts rsp.results[0].title
 #  => "Microsoft Bing more popular than Yahoo"
 #  
 #  rsp = bing.spell("coincidance")
-#  puts rsp.spell.results[0].value
+#  puts rsp.results[0].value
 #  => "coincidence"
 #  
 #  rsp = bing.instant_answer("How many rods in a furlong?")
-#  puts rsp.instant_answer.results[0].instant_answer_specific_data.encarta.value
+#  puts rsp.results[0].instant_answer_specific_data.encarta.value
 #  => "1 furlong = 40 rods"
 #
 class RBing
@@ -49,10 +49,6 @@ class RBing
   #  => [3, 4]
   #
   class ResponseData < Hash
-    # Returns the web search results from Bing
-    def web
-      self
-    end
   private
     def initialize(data={})
       data.each_pair {|k,v| self[k.to_s] = deep_parse(v) }

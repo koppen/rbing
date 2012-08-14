@@ -13,23 +13,23 @@ Get a App ID at: <http://www.bing.com/developers/createapp.aspx>
   bing = RBing.new("YOURAPPID")
   
   rsp = bing.web("ruby")
-  puts rsp.web.results[0].title
+  puts rsp.results[0].title
   => "Ruby (programming language) - Wikipedia, the free encyclopedia"
   
   rsp = bing.web("ruby", :site => "github.com")
-  puts rsp.web.results[0].url
+  puts rsp.results[0].url
   => "http://github.com/vim-ruby/vim-ruby/tree/master"
   
   rsp = bing.web("ruby", :site => ["github.com", "rubyforge.org"])
-  puts rsp.web.results[0].url
+  puts rsp.results[0].url
   => "http://rubyforge.org/"
   
   rsp = bing.news("search engines")
-  puts rsp.news.results[0].title
+  puts rsp.results[0].title
   => "Microsoft Bing more popular than Yahoo"
   
   rsp = bing.spell("coincidance")
-  puts rsp.spell.results[0].value
+  puts rsp.results[0].value
   => "coincidence"
   
   rsp = bing.instant_answer("How many rods in a furlong?")

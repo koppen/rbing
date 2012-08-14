@@ -3,45 +3,28 @@
 
 A gem that provides an interface to Microsoft's Bing search API.
 
-
 == Usage
 
-Get a App ID at: <http://www.bing.com/developers/createapp.aspx>
+Get a Windows Azure Data Marketplace account at https://datamarket.azure.com/,
+then setup an Account Key at https://datamarket.azure.com/account/keys.
+
+Finally, subscribe to Bing Search API - Web Results Only Data at
+https://datamarket.azure.com/dataset/bing/searchweb.
 
   require 'rubygems'
   require 'rbing'
-  bing = RBing.new("YOURAPPID")
+  bing = RBing.new("YOURACCOUNTKEY")
   
   rsp = bing.web("ruby")
   puts rsp.results[0].title
   => "Ruby (programming language) - Wikipedia, the free encyclopedia"
   
-  rsp = bing.web("ruby", :site => "github.com")
-  puts rsp.results[0].url
-  => "http://github.com/vim-ruby/vim-ruby/tree/master"
-  
-  rsp = bing.web("ruby", :site => ["github.com", "rubyforge.org"])
-  puts rsp.results[0].url
-  => "http://rubyforge.org/"
-  
-  rsp = bing.news("search engines")
-  puts rsp.results[0].title
-  => "Microsoft Bing more popular than Yahoo"
-  
-  rsp = bing.spell("coincidance")
-  puts rsp.results[0].value
-  => "coincidence"
-  
-  rsp = bing.instant_answer("How many rods in a furlong?")
-  puts rsp.instant_answer.results[0].instant_answer_specific_data.encarta.value
-  => "1 furlong = 40 rods"
-
 
 == Command Line Utility
 
 RBing also has a simple command line interface.
 
-Put your App Id into $HOME/.rbing_app_id and you can use rbing:
+Put your account key into $HOME/.rbing_app_id and you can use rbing:
 
   $> rbing "ruby gems"
   [{"Url"=>"http://rubygems.org/",
@@ -52,21 +35,6 @@ Put your App Id into $HOME/.rbing_app_id and you can use rbing:
     "DateTime"=>Wed Jun 03 11:25:29 UTC 2009,
     "Description"=>
      "The Gem::Specification object controls the data..."},
-   ...
-  ]
-
-The default source is "web" but you can specify another:
-
-  $> rbing news "revolutionary technology"
-  [{"BreakingNews"=>0,
-    "Url"=>
-     "http://www.tmcnet.com/usubmit/-bt-successfully-completes-exchange-exchange-cisco-telepresence-call-/2009/06/04/4211245.htm",
-    "Source"=>"TMCnet",
-    "Title"=>
-     "BT Successfully Completes Exchange to Exchange Cisco TelePresence Call ... ",
-    "Snippet"=>
-     "BT Successfully Completes Exchange to Exchange Cisco TelePresence Call; Revolutionary...",
-    "Date"=>Thu Jun 04 13:33:09 UTC 2009},
    ...
   ]
 

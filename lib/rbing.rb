@@ -31,6 +31,9 @@ require "yaml"
 #
 class RBing
 
+  # Raised when the API endpoint doesn't return expected response
+  class APIError < IOError; end
+
   # Convenience wrapper for the response Hash.
   # Converts keys to Strings. Crawls through all
   # member data and converts any other Hashes it
@@ -110,7 +113,11 @@ class RBing
   #
   def search(source, query, options={})
     rsp = self.class.get('', options_for(source, query, options))
-    ResponseData.new(rsp['d']) if rsp
+    if rsp.response.is_a?(Net::HTTPOK)
+      ResponseData.new(rsp['d']) if rsp
+    else
+      raise RBing::APIError.new(rsp.response.inspect)
+    end
   end
 
 private

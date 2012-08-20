@@ -80,7 +80,7 @@ class RBing
 
   include HTTParty
 
-  attr_accessor :instance_options
+  attr_accessor :instance_options, :app_id
   base_uri "https://api.datamarket.azure.com/Data.ashx/Bing/SearchWeb/v1/Web"
 
   BASE_OPTIONS = [:version, :market, :adult, :query, :appid]
@@ -124,7 +124,8 @@ private
   # +options+ can contain values to be passed with each query.
   #
   def initialize(app_id=nil, options={})
-    @instance_options = options.merge(:AppId => (app_id || user_app_id))
+    @app_id = app_id
+    @instance_options = options
   end
   # constructs a query string for the given
   # +query+ and the optional query +options+
@@ -172,9 +173,8 @@ private
     
     authentication_options = {:basic_auth => {
       :username => '',
-      :password => "#{@instance_options[:AppId]}"
+      :password => (app_id || user_app_id)
     }}
-    opts.delete(:AppId)
     http_options = options[:http] || {}
     http_options.merge!(authentication_options)
     http_options.merge(:query => opts)

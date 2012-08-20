@@ -81,8 +81,7 @@ class RBing
   include HTTParty
 
   attr_accessor :instance_options
-
-  base_uri "https://api.datamarket.azure.com/Data.ashx/Bing/SearchWeb/Web"
+  base_uri "https://api.datamarket.azure.com/Data.ashx/Bing/SearchWeb/v1/Web"
   format :json
 
   BASE_OPTIONS = [:version, :market, :adult, :query, :appid]
@@ -90,7 +89,7 @@ class RBing
   # Query Keywords: <http://help.live.com/help.aspx?project=wl_searchv1&market=en-US&querytype=keyword&query=redliub&tmt=&domain=www.bing.com:80>
   #
   QUERY_KEYWORDS = [:site, :language, :contains, :filetype, :inanchor, :inbody, :intitle, :ip, :loc, :location, :prefer, :feed, :hasfeed, :url]
-
+  RESERVED_OPTIONS = [:top, :skip]
   # Source Types: <http://msdn.microsoft.com/en-us/library/dd250847.aspx>
   #
   SOURCES = %w(Web)
@@ -112,11 +111,14 @@ class RBing
   # issues a search for +query+ in +source+
   #
   def search(source, query, options={})
-    rsp = self.class.get('', options_for(source, query, options))
+    rsp = self.class.get("", options_for(source, query, options))
     if rsp.response.is_a?(Net::HTTPOK)
       ResponseData.new(rsp['d']) if rsp
     else
-      raise RBing::APIError.new(rsp.response.inspect)
+      raise RBing::APIError.new(
+        rsp.request.to_yaml + "\n" +
+        rsp.response.to_yaml
+      )
     end
   end
 
@@ -126,23 +128,25 @@ private
   # +options+ can contain values to be passed with each query.
   #
   def initialize(app_id=nil, options={})
-    @instance_options = options # options.merge(:AppId => (app_id || user_app_id))
+    @instance_options = options.merge(:AppId => (app_id || user_app_id))
   end
   # constructs a query string for the given
   # +query+ and the optional query +options+
   #
   def build_query(query, options={})
-    queries = []
+    queries = {}
+    queries[:Query] = "'#{query}'"
+    
     QUERY_KEYWORDS.each do |kw|
       next unless options[kw]
       if options[kw].is_a? Array
         kw_query = options[kw].map {|s| "#{kw}:#{s}".strip }.join(" OR ")
-        queries << " (#{kw_query})"
+        queries[kw.to_sym] = "(#{kw_query})"
       else
-        queries << " #{kw}:#{options[kw]}"
+        queries[kw.to_sym] = options[kw]
       end
     end
-    "'#{query} #{queries.join(' ')}'".strip
+    queries
   end
 
   # returns +options+ with its keys converted to
@@ -158,18 +162,23 @@ private
   #
   def options_for(type, query, options={})
     opts = instance_options.merge(filter_hash(options, BASE_OPTIONS))
-    opts.merge!(:Query => build_query(query, options))
+    opts.merge!(build_query(query, options))
 
     source_options = filter_hash(options, [:http] + BASE_OPTIONS + QUERY_KEYWORDS)
     opts.merge!(scope_source_options(type, source_options))
-
-    opts.merge!('$format' => 'json')
-
+    RESERVED_OPTIONS.each do |reserved_option|
+      next unless options[reserved_option]
+      opts.merge!("$#{reserved_option}" => options[reserved_option])
+      opts.delete(reserved_option)
+      opts.delete('Web.' + "#{reserved_option}") # Why is this needed? What is causing it to set this?
+    end
+    opts.merge!('$format' => 'JSON')
+    
     authentication_options = {:basic_auth => {
       :username => '',
-      :password => "/yjW8ZAu5eW2+JTS0RbYvZk4V2lOivQVBK360EP3kk0="
+      :password => "#{@instance_options[:AppId]}"
     }}
-
+    opts.delete(:AppId)
     http_options = options[:http] || {}
     http_options.merge!(authentication_options)
     http_options.merge(:query => opts)

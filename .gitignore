@@ -6,3 +6,4 @@ pkg/*
 rbing/*
 *.swp
 Gemfile.lock
+.rvmrc

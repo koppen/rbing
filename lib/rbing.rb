@@ -115,10 +115,7 @@ class RBing
     if rsp.response.is_a?(Net::HTTPOK)
       ResponseData.new(rsp['d']) if rsp
     else
-      raise RBing::APIError.new(
-        rsp.request.to_yaml + "\n" +
-        rsp.response.to_yaml
-      )
+      raise RBing::APIError.new(rsp.response.inspect)
     end
   end
 

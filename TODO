@@ -1,0 +1,1 @@
+Right now rbing/azure is using the web results only api. It's cheaper but we need to include an option to use the regular api as well for those that need the extra features.

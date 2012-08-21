@@ -162,12 +162,10 @@ private
     opts.merge!(build_query(query, options))
 
     source_options = filter_hash(options, [:http] + BASE_OPTIONS + QUERY_KEYWORDS)
-    opts.merge!(scope_source_options(type, source_options))
     RESERVED_OPTIONS.each do |reserved_option|
       next unless options[reserved_option]
       opts.merge!("$#{reserved_option}" => options[reserved_option])
       opts.delete(reserved_option)
-      opts.delete('Web.' + "#{reserved_option}") # Why is this needed? What is causing it to set this?
     end
     opts.merge!('$format' => 'JSON')
     
@@ -178,13 +176,6 @@ private
     http_options = options[:http] || {}
     http_options.merge!(authentication_options)
     http_options.merge(:query => opts)
-  end
-
-  # returns a Hash containing the data in +options+
-  # with the keys prefixed with +type+ and '.'
-  #
-  def scope_source_options(type, options={})
-    options.inject({}) {|h,kv| h["#{type}.#{kv[0]}"] = kv[1]; h }
   end
 
   # returns the user's default app id, if one has been

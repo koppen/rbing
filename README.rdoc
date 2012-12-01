@@ -1,3 +1,8 @@
+== Bing has deprecated APP ID
+
+Migration guide: https://skydrive.live.com/view.aspx?resid=9C9479871FBFA822!111&app=Word
+
+
 
 == RBing
 

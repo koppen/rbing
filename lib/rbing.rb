@@ -114,7 +114,7 @@ class RBing
     if rsp.response.is_a?(Net::HTTPOK)
       ResponseData.new(rsp['d']) if rsp
     else
-      raise RBing::APIError.new(rsp.response.inspect)
+      fail RBing::APIError.new, rsp.response.body.strip
     end
   end
 
